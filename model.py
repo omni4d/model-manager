@@ -8,7 +8,8 @@ tuple_types = [
     'ordinary_tuple'
 ]
 
-file = urlopen('https://raw.githubusercontent.com/omni4d/model/master/omni4d.core.yaml')
+file = urlopen(
+    'https://raw.githubusercontent.com/omni4d/model/master/omni4d.core.yaml')
 model = yaml.load(file)
 graph = nx.Graph()
 
