@@ -1,6 +1,6 @@
 import networkx as nx
 import yaml
-from pathlib import Path
+from urllib.request import urlopen
 
 tuple_types = [
     'whole_part_tuple',
@@ -8,7 +8,7 @@ tuple_types = [
     'ordinary_tuple'
 ]
 
-file = Path('omni4d.core.yaml').open('r')
+file = urlopen('https://raw.githubusercontent.com/omni4d/model/master/omni4d.core.yaml')
 model = yaml.load(file)
 graph = nx.Graph()
 
