@@ -1,11 +1,5 @@
 #!/usr/bin/env python
 from pyorient import OrientDB, STORAGE_TYPE_MEMORY, DB_TYPE_GRAPH
-import yaml
-from urllib.request import urlopen
-
-db_name = 'omni4d'
-model_url = (
-    'https://raw.githubusercontent.com/omni4d/model/master/omni4d.core.yaml')
 
 vertex_types = {
     'tuples': [
@@ -26,11 +20,6 @@ vertex_types = {
         'individual'
     ]
 }
-
-
-def model_from_url(url):
-    file = urlopen(url)
-    return yaml.load(file)
 
 
 def create_vertex(sign, sign_type, client):
@@ -68,16 +57,16 @@ def create_db(db_name, client):
         for subtype in subtypes:
             client.command('create class %s extends V' % subtype)
 
-if __name__ == '__main__':
-    model = model_from_url(model_url)
 
-    client = OrientDB('localhost', 2424)
-    client.connect('admin', 'admin')
+def import_model(model, db_name, server, port, user, password):
+
+    client = OrientDB(server, port)
+    client.connect(user, password)
 
     if not client.db_exists(db_name, STORAGE_TYPE_MEMORY):
         create_db(db_name, client)
 
-    client.db_open(db_name, 'admin', 'admin', DB_TYPE_GRAPH)
+    client.db_open(db_name, user, password, DB_TYPE_GRAPH)
     edges = create_vertices(model, client)
     create_edges(edges, client)
 

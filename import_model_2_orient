@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+import argparse
+from omni4d_python.orient import import_model
+from omni4d_python.model import model_from_url
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description="Import an omni4d model to an OrientDb database")
+
+    parser.add_argument(
+        '-f', '--file_url',
+        type=str,
+        dest="file_url",
+        help='url to model definition file')
+
+    parser.add_argument(
+        '-d', '--db_name',
+        type=str,
+        default='omni4d',
+        dest="db_name",
+        help='OrientDb database name')
+
+    parser.add_argument(
+        '-s', '--server',
+        type=str,
+        default='localhost',
+        dest="server",
+        help='hostname for OrientDb Server')
+
+    parser.add_argument(
+        '-n', '--port_number',
+        type=int,
+        default=2424,
+        dest="port",
+        help='Port number for OrientDb Server')
+
+    parser.add_argument(
+        '-u', '--user',
+        type=str,
+        default='admin',
+        dest="user",
+        help='User name for OrientDb Server')
+
+    parser.add_argument(
+        '-p', '--password',
+        type=str,
+        default='admin',
+        dest="password",
+        help='Password for OrientDb Server')
+
+    args = parser.parse_args()
+
+    model = model_from_url(args.file_url)
+    import_model(model, args.db_name, args.server, args.port, args.user, args.password)
