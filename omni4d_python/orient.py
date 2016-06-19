@@ -31,20 +31,22 @@ def create_vertex(sign, sign_type, client):
 def create_vertices(model, client):
     edges = []
     for sign, attributes in model.items():
-        create_vertex(sign, attributes['type'], client)
+        query = "select * from V where uuid='%s'" % sign
+        if not client.query(query):
+            create_vertex(sign, attributes['type'], client)
 
-        if attributes['type'] in vertex_types['tuples']:
-            for object, details in attributes['objects'].items():
-                edges.append({
-                    'from_sign': sign,
-                    'to_sign': object,
-                    'role': details['role']
-                })
+            if attributes['type'] in vertex_types['tuples']:
+                for object, details in attributes['objects'].items():
+                    edges.append({
+                        'from_sign': sign,
+                        'to_sign': object,
+                        'role': details['role']
+                    })
     return edges
 
 
 def create_edge(from_sign, to_sign, role, client):
-    query = "SELECT FROM ( SELECT expand( classes ) FROM metadata:schema ) WHERE name = '%s'" % role
+    query = "select from (select expand(classes) from metadata:schema) where name = '%s'" % role
     if not client.query(query):
         client.command('create class %s extends E' % role)
     client.command('create edge %s from (select from V where uuid = "%s") to (select from V where uuid = "%s")' % (role, from_sign, to_sign))
