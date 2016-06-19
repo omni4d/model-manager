@@ -24,6 +24,11 @@ vertex_types = {
 edge_types = ['whole', 'part', 'class', 'member']
 
 
+def orient_id(sign, client):
+    records = client.command("select from V where uuid='%s'" % sign)
+    return records[0]._rid[1:]
+
+
 def create_vertex(sign, sign_type, client):
     client.command('create vertex %s set uuid = "%s"' % (sign_type, sign))
 
@@ -31,25 +36,39 @@ def create_vertex(sign, sign_type, client):
 def create_vertices(model, client):
     edges = []
     for sign, attributes in model.items():
-        query = "select * from V where uuid='%s'" % sign
-        if not client.query(query):
+        if not orient_id(sign, client):
             create_vertex(sign, attributes['type'], client)
 
-            if attributes['type'] in vertex_types['tuples']:
-                for object, details in attributes['objects'].items():
-                    edges.append({
-                        'from_sign': sign,
-                        'to_sign': object,
-                        'role': details['role']
-                    })
+        if attributes['type'] in vertex_types['tuples']:
+            for object, details in attributes['objects'].items():
+                edges.append({
+                    'from_sign': sign,
+                    'to_sign': object,
+                    'role': details['role']
+                })
     return edges
 
 
 def create_edge(from_sign, to_sign, role, client):
+    # Check to see if the role exists as a subclass of E and create it if not
     query = "select from (select expand(classes) from metadata:schema) where name = '%s'" % role
     if not client.query(query):
         client.command('create class %s extends E' % role)
-    client.command('create edge %s from (select from V where uuid = "%s") to (select from V where uuid = "%s")' % (role, from_sign, to_sign))
+
+    # Check that both the from_sign and to_sign exists as vertices
+    orient_ids = {}
+    for sign in [from_sign, to_sign]:
+        rid = orient_id(sign, client)
+        if rid:
+            orient_ids[sign] = rid
+        else:
+            raise ValueError('Cannot find vertex for %s' % sign)
+
+    query = "select * from E where out = %s and in = %s" % (orient_ids[from_sign], orient_ids[to_sign])
+    edge = client.query(query)
+    if not edge:
+        query = 'create edge %s from %s to %s' % (role, orient_ids[from_sign], orient_ids[to_sign])
+        client.command(query)
 
 
 def create_edges(edges, client):
