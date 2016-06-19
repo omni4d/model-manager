@@ -26,7 +26,8 @@ edge_types = ['whole', 'part', 'class', 'member']
 
 def orient_id(sign, client):
     records = client.command("select from V where uuid='%s'" % sign)
-    return records[0]._rid[1:]
+    if records:
+        return records[0]._rid[1:]
 
 
 def create_vertex(sign, sign_type, client):
