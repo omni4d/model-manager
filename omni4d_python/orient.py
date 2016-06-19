@@ -42,7 +42,10 @@ def create_vertices(model, client):
 
 
 def create_edge(from_sign, to_sign, role, client):
-    client.command('create edge E from (select from V where uuid = "%s") to (select from V where uuid = "%s") set role="%s"' % (from_sign, to_sign, role))
+    query = "SELECT FROM ( SELECT expand( classes ) FROM metadata:schema ) WHERE name = '%s'" % role
+    if not client.query(query):
+        client.command('create class %s extends E' % role)
+    client.command('create edge %s from (select from V where uuid = "%s") to (select from V where uuid = "%s")' % (role, from_sign, to_sign))
 
 
 def create_edges(edges, client):
