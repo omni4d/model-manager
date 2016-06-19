@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from pyorient import OrientDB, STORAGE_TYPE_MEMORY, DB_TYPE_GRAPH
 import yaml
 from urllib.request import urlopen
