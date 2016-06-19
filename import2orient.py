@@ -57,7 +57,7 @@ def create_edge(from_sign, to_sign, role, client):
 
 def create_edges(edges, client):
     for edge in edges:
-        create_edge(edge['from_sign'], edge['to_sign'], edge['role'], client)  
+        create_edge(edge['from_sign'], edge['to_sign'], edge['role'], client)
 
 
 def create_db(db_name, client):
