@@ -64,6 +64,7 @@ def create_edge(from_sign, to_sign, role, client):
         else:
             raise ValueError('Cannot find vertex for %s' % sign)
 
+    # Check whether the edge already exists and create it if not
     query = "select * from E where out = %s and in = %s" % (orient_ids[from_sign], orient_ids[to_sign])
     edge = client.query(query)
     if not edge:
