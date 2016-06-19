@@ -21,6 +21,8 @@ vertex_types = {
     ]
 }
 
+edge_types = ['whole', 'part', 'class', 'member']
+
 
 def create_vertex(sign, sign_type, client):
     client.command('create vertex %s set uuid = "%s"' % (sign_type, sign))
@@ -59,6 +61,9 @@ def create_db(db_name, client):
     for sign_type, subtypes in vertex_types.items():
         for subtype in subtypes:
             client.command('create class %s extends V' % subtype)
+
+    for edge_type in edge_types:
+        client.command('create class %s extends E' % edge_type)
 
 
 def import_model(model, db_name, server, port, user, password):
