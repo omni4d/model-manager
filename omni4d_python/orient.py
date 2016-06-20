@@ -73,7 +73,6 @@ def create_edge(from_sign, to_sign, role, client):
     # Check to see if the role exists as a subclass of E and create it if not
     query = "select from (select expand(classes) from metadata:schema) where name = '%s'" % role
     if not client.query(query):
-        print('hello')
         logger.info('Edge type %s does not exist. Creating it.', role)
         client.command('create class %s extends E' % role)
 
