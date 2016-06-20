@@ -25,16 +25,26 @@ edge_types = ['whole', 'part', 'class', 'member']
 
 
 def orient_id(sign, client):
+    """
+    Return the OrientDb Record ID (rid) for a given sign
+    """
     records = client.command("select from V where uuid='%s'" % sign)
     if records:
         return records[0]._rid[1:]
 
 
 def create_vertex(sign, sign_type, client):
+    """
+    Generate and execute the command to create a vertex
+    """
     client.command('create vertex %s set uuid = "%s"' % (sign_type, sign))
 
 
 def create_vertices(model, client):
+    """
+    From a model definition, create the vertexes and generate the list of
+    edges required
+    """
     edges = []
     for sign, attributes in model.items():
         if not orient_id(sign, client):
@@ -51,6 +61,9 @@ def create_vertices(model, client):
 
 
 def create_edge(from_sign, to_sign, role, client):
+    """
+    Create an edge if it doesn't already exists and the from and to signs do
+    """
     # Check to see if the role exists as a subclass of E and create it if not
     query = "select from (select expand(classes) from metadata:schema) where name = '%s'" % role
     if not client.query(query):
@@ -74,11 +87,17 @@ def create_edge(from_sign, to_sign, role, client):
 
 
 def create_edges(edges, client):
+    """
+    From a list of edges, create each
+    """
     for edge in edges:
         create_edge(edge['from_sign'], edge['to_sign'], edge['role'], client)
 
 
 def create_db(db_name, client):
+    """
+    Create a new database and populate it with the base types
+    """
     client.db_create(db_name, DB_TYPE_GRAPH, STORAGE_TYPE_MEMORY)
 
     for sign_type, subtypes in vertex_types.items():
