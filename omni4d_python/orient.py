@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from pyorient import OrientDB, STORAGE_TYPE_MEMORY, DB_TYPE_GRAPH
+import tqdm
 
 vertex_types = {
     'tuples': [
@@ -46,7 +47,8 @@ def create_vertices(model, client):
     edges required
     """
     edges = []
-    for sign, attributes in model.items():
+    for sign, attributes in tqdm.tqdm(model.items(), desc='Creating vertices',
+                                      leave=True):
         if not orient_id(sign, client):
             create_vertex(sign, attributes['type'], client)
 
@@ -57,6 +59,7 @@ def create_vertices(model, client):
                     'to_sign': object,
                     'role': details['role']
                 })
+
     return edges
 
 
@@ -90,7 +93,7 @@ def create_edges(edges, client):
     """
     From a list of edges, create each
     """
-    for edge in edges:
+    for edge in tqdm.tqdm(edges, desc='Creating vertices', leave=True):
         create_edge(edge['from_sign'], edge['to_sign'], edge['role'], client)
 
 
