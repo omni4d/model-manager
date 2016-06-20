@@ -2,10 +2,25 @@
 import argparse
 from omni4d_python.orient import import_model
 from omni4d_python.model import model_from_url
+from omni4d_python.session import setup_logging
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="Import an omni4d model to an OrientDb database")
+
+    parser.add_argument(
+        '-l', '--logging',
+        type=str,
+        dest='logging_destination',
+        default='console',
+        help='Logging destination (console or none)')
+
+    parser.add_argument(
+        '-v', '--verbosity',
+        type=str,
+        default='INFO',
+        dest="verbosity",
+        help='url to model definition file')
 
     parser.add_argument(
         '-f', '--file_url',
@@ -51,4 +66,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     model = model_from_url(args.file_url)
+    setup_logging(args.logging_destination, args.verbosity)
     import_model(model, args.db_name, args.server, args.port, args.user, args.password)
