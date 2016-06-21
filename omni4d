@@ -5,8 +5,7 @@ from omni4d_python.model import model_from_url
 from omni4d_python.session import setup_logging
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description="Import an omni4d model to an OrientDb database")
+    parser = argparse.ArgumentParser(prog='PROG')
 
     parser.add_argument(
         '-l', '--logging',
@@ -22,41 +21,44 @@ if __name__ == '__main__':
         dest="verbosity",
         help='url to model definition file')
 
-    parser.add_argument(
+    subparsers = parser.add_subparsers(help='sub-command help')
+    parser_import = subparsers.add_parser('import', help='import help')
+
+    parser_import.add_argument(
         '-f', '--file_url',
         type=str,
         dest="file_url",
         help='url to model definition file')
 
-    parser.add_argument(
+    parser_import.add_argument(
         '-d', '--db_name',
         type=str,
         default='omni4d',
         dest="db_name",
         help='OrientDb database name')
 
-    parser.add_argument(
+    parser_import.add_argument(
         '-s', '--server',
         type=str,
         default='localhost',
         dest="server",
         help='hostname for OrientDb Server')
 
-    parser.add_argument(
+    parser_import.add_argument(
         '-n', '--port_number',
         type=int,
         default=2424,
         dest="port",
         help='Port number for OrientDb Server')
 
-    parser.add_argument(
+    parser_import.add_argument(
         '-u', '--user',
         type=str,
         default='admin',
         dest="user",
         help='User name for OrientDb Server')
 
-    parser.add_argument(
+    parser_import.add_argument(
         '-p', '--password',
         type=str,
         default='admin',
