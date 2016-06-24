@@ -3,26 +3,16 @@ from pyorient import OrientDB, STORAGE_TYPE_MEMORY, DB_TYPE_GRAPH
 import tqdm
 import logging
 
-vertex_types = {
-    'tuples': [
-        'whole_part_tuple',
-        'class_member_tuple',
-        'ordinary_tuple'
-    ],
-    'classes': [
-        'class_of_individuals',
-        'class_of_events',
-        'class_of_classes',
-        'class_of_tuples'
-    ],
-    'events': [
-        'event'
-    ],
-    'individuals': [
-        'individual'
-    ]
+types = {
+    'class': 'class_of_objects',
+    'individual': 'individual',
+    'event': 'event',
+    'whole_part_tuple': 'whole_part_tuple',
+    'class_member_tuple': 'class_member_tuple',
+    'ordinary_tuple': 'ordinary_tuple'
 }
 
+tuple_types = ['whole_part_tuple', 'class_member_tuple', 'ordinary_tuple']
 edge_types = ['whole', 'part', 'class', 'member']
 
 logger = logging.getLogger(__name__)
@@ -51,11 +41,12 @@ def create_vertices(model, client):
     """
     edges = []
     for sign, attributes in tqdm.tqdm(model.items(), desc='Creating vertices',
-                                      leave=True):
+                                     leave=True):
+        sign_type = types[attributes['type']]
         if not orient_id(sign, client):
-            create_vertex(sign, attributes['type'], client)
+            create_vertex(sign, sign_type, client)
 
-        if attributes['type'] in vertex_types['tuples']:
+        if attributes['type'] in tuple_types:
             for object, details in attributes['objects'].items():
                 edges.append({
                     'from_sign': sign,
@@ -107,9 +98,8 @@ def create_db(db_name, client):
     """
     client.db_create(db_name, DB_TYPE_GRAPH, STORAGE_TYPE_MEMORY)
 
-    for sign_type, subtypes in vertex_types.items():
-        for subtype in subtypes:
-            client.command('create class %s extends V' % subtype)
+    for key, value in types.items():
+        client.command('create class %s extends V' % value)
 
     for edge_type in edge_types:
         client.command('create class %s extends E' % edge_type)
