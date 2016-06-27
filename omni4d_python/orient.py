@@ -7,12 +7,9 @@ types = {
     'class': 'class_of_objects',
     'individual': 'individual',
     'event': 'event',
-    'whole_part_tuple': 'whole_part_tuple',
-    'class_member_tuple': 'class_member_tuple',
-    'ordinary_tuple': 'ordinary_tuple'
+    'tuple': 'tuple'
 }
 
-tuple_types = ['whole_part_tuple', 'class_member_tuple', 'ordinary_tuple']
 edge_types = ['whole', 'part', 'class', 'member']
 
 logger = logging.getLogger(__name__)
@@ -46,7 +43,7 @@ def create_vertices(model, client):
         if not orient_id(sign, client):
             create_vertex(sign, sign_type, client)
 
-        if attributes['type'] in tuple_types:
+        if attributes['type'] == types['tuple']:
             for object, details in attributes['objects'].items():
                 edges.append({
                     'from_sign': sign,
