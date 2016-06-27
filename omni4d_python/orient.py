@@ -10,7 +10,7 @@ types = {
     'tuple': 'tuple'
 }
 
-edge_types = ['whole', 'part', 'class', 'member']
+edge_types = ['part', 'subpart', 'class', 'member']
 
 logger = logging.getLogger(__name__)
 
