@@ -21,14 +21,30 @@ def orient_id(sign, client):
     """
     records = client.command("select from V where uuid='%s'" % sign)
     if records:
-        return records[0]._rid[1:]
+        rid = records[0]._rid[1:]
+        logger.debug('orient_id: returned %s as RID for %s' % (rid, sign))
+    else:
+        rid = None
+    return rid
 
 
 def create_vertex(sign, sign_type, client):
     """
     Generate and execute the command to create a vertex
     """
-    client.command('create vertex %s set uuid = "%s"' % (sign_type, sign))
+    rid = orient_id(sign, client)
+    if not rid:
+        command = 'create vertex %s set uuid = "%s"' % (sign_type, sign)
+        logger.debug('create_vertex: Executing "%s"' % command)
+        client.command(command)
+        rid = orient_id(sign, client)
+        logger.debug(
+            'create_vertex: Vertex created with RID %s for %s' % (rid, sign))
+    else:
+        logger.debug(
+            'create_vertex: Sign with RID %s already exists for %s' %
+            (rid, sign))
+    return rid
 
 
 def create_vertices(model, client):
@@ -37,11 +53,10 @@ def create_vertices(model, client):
     edges required
     """
     edges = []
-    for sign, attributes in tqdm.tqdm(model.items(), desc='Creating vertices',
-                                     leave=True):
+    items = tqdm.tqdm(model.items(), desc='Creating vertices', leave=True)
+    for sign, attributes in items:
         sign_type = types[attributes['type']]
-        if not orient_id(sign, client):
-            create_vertex(sign, sign_type, client)
+        create_vertex(sign, sign_type, client)
 
         if attributes['type'] == types['tuple']:
             for object, details in attributes['objects'].items():
@@ -50,7 +65,7 @@ def create_vertices(model, client):
                     'to_sign': object,
                     'role': details['role']
                 })
-
+    logger.debug('create_vertices: Found %i  edges to create' % len(edges))
     return edges
 
 
@@ -71,7 +86,8 @@ def create_edge(from_sign, to_sign, role, client):
         if rid:
             orient_ids[sign] = rid
         else:
-            raise ValueError('Cannot find vertex for %s' % sign)
+            logger.error('ERROR: Cannot find vertex for %s' % sign)
+            return
 
     # Check whether the edge already exists and create it if not
     query = "select * from E where out = %s and in = %s" % (orient_ids[from_sign], orient_ids[to_sign])
