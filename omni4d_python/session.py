@@ -17,7 +17,7 @@ def setup_logging(logging_destination='console', verbosity='INFO'):
     logFormatter = logging.Formatter(logFormatters[logging_destination])
 
     logHandler.setFormatter(logFormatter)
-    logger = logging.getLogger('matador')
+    logger = logging.getLogger('omni4d_python')
     level = logging.getLevelName(verbosity.upper())
     logger.setLevel(level)
     logger.addHandler(logHandler)
