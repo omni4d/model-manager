@@ -105,10 +105,13 @@ def create_edges(edges, client):
         create_edge(edge['from_sign'], edge['to_sign'], edge['role'], client)
 
 
-def create_db(db_name, client):
+def create_db(db_name, server, port, user, password):
     """
     Create a new database and populate it with the base types
     """
+    client = OrientDB(server, port)
+    client.connect(user, password)
+
     client.db_create(db_name, DB_TYPE_GRAPH, STORAGE_TYPE_MEMORY)
 
     for key, value in types.items():
@@ -122,9 +125,6 @@ def import_model(model, db_name, server, port, user, password):
 
     client = OrientDB(server, port)
     client.connect(user, password)
-
-    if not client.db_exists(db_name, STORAGE_TYPE_MEMORY):
-        create_db(db_name, client)
 
     client.db_open(db_name, user, password, DB_TYPE_GRAPH)
     edges = create_vertices(model, client)

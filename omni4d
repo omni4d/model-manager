@@ -19,7 +19,7 @@ Options:
     --version                  Show the version
 """
 from docopt import docopt
-from omni4d_python.orient import import_model
+from omni4d_python.orient import import_model, create_db
 from omni4d_python.model import model_from_url
 from omni4d_python.session import setup_logging
 
@@ -34,13 +34,24 @@ if __name__ == '__main__':
     logger = setup_logging(**logging_args)
     logger.debug('arguments: %s' % arguments)
 
-    model = model_from_url(arguments['--url'])
-    command_args = {
-        'model': model,
-        'db_name': arguments['--dbname'],
-        'server': arguments['--server'],
-        'port': int(arguments['--port']),
-        'user': arguments['--user'],
-        'password': arguments['--password']
-    }
-    import_model(**command_args)
+    if arguments['create']:
+        command_args = {
+            'db_name': arguments['--dbname'],
+            'server': arguments['--server'],
+            'port': int(arguments['--port']),
+            'user': arguments['--user'],
+            'password': arguments['--password']
+        }
+        create_db(**command_args)
+
+    if arguments['import']:
+        model = model_from_url(arguments['--url'])
+        command_args = {
+            'model': model,
+            'db_name': arguments['--dbname'],
+            'server': arguments['--server'],
+            'port': int(arguments['--port']),
+            'user': arguments['--user'],
+            'password': arguments['--password']
+        }
+        import_model(**command_args)
