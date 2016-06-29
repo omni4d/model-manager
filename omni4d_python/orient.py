@@ -34,8 +34,8 @@ def create_vertex(sign, sign_type, client):
     """
     rid = orient_id(sign, client)
     if not rid:
-        command = 'create vertex %s set uuid = "%s"' % (sign_type, sign)
-        logger.debug('create_vertex: Executing "%s"' % command)
+        command = "create vertex %s set uuid = '%s'" % (sign_type, sign)
+        logger.debug("create_vertex: Executing '%s'" % command)
         client.command(command)
         rid = orient_id(sign, client)
         logger.debug(
@@ -74,7 +74,10 @@ def create_edge(from_sign, to_sign, role, client):
     Create an edge if it doesn't already exists and the from and to signs do
     """
     # Check to see if the role exists as a subclass of E and create it if not
-    query = "select from (select expand(classes) from metadata:schema) where name = '%s'" % role
+    query = (
+        """select from (select expand(classes) from metadata:schema)
+        where name = '%s'""" %
+        role)
     if not client.query(query):
         logger.info('Edge type %s does not exist. Creating it.', role)
         client.command('create class %s extends E' % role)
@@ -90,10 +93,14 @@ def create_edge(from_sign, to_sign, role, client):
             return
 
     # Check whether the edge already exists and create it if not
-    query = "select * from E where out = %s and in = %s" % (orient_ids[from_sign], orient_ids[to_sign])
+    query = (
+        "select * from E where out = %s and in = %s" %
+        (orient_ids[from_sign], orient_ids[to_sign]))
     edge = client.query(query)
     if not edge:
-        query = 'create edge %s from %s to %s' % (role, orient_ids[from_sign], orient_ids[to_sign])
+        query = (
+            'create edge %s from %s to %s' %
+            (role, orient_ids[from_sign], orient_ids[to_sign]))
         client.command(query)
 
 
@@ -115,10 +122,10 @@ def create_db(db_name, server, port, user, password):
     client.db_create(db_name, DB_TYPE_GRAPH, STORAGE_TYPE_MEMORY)
 
     for key, value in types.items():
-        client.command('create class %s extends V' % value)
+        client.command("create class %s extends V" % value)
 
     for edge_type in edge_types:
-        client.command('create class %s extends E' % edge_type)
+        client.command("create class %s extends E" % edge_type)
 
     client.db_close(db_name)
 
