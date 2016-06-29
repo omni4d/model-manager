@@ -18,7 +18,6 @@ def setup_logging(logging_destination='console', verbosity='INFO'):
 
     logHandler.setFormatter(logFormatter)
     logger = logging.getLogger('omni4d_python')
-    level = logging.getLevelName(verbosity.upper())
-    logger.setLevel(level)
+    logger.setLevel(logging.getLevelName(verbosity.upper()))
     logger.addHandler(logHandler)
     return logger
