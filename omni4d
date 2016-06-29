@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Run axelrod
 Usage:
+    omni4d [-l LOGGING] [-v VERBOSITY] create [-d DBNAME] [-s SERVER] [-n PORT] [-u USER] [-p PASSWORD]
     omni4d [-l LOGGING] [-v VERBOSITY] import -f URL [-d DBNAME] [-s SERVER] [-n PORT] [-u USER] [-p PASSWORD]
     omni4d -h | --help
     omni4d --version
@@ -25,14 +26,15 @@ from omni4d_python.session import setup_logging
 if __name__ == '__main__':
 
     arguments = docopt(__doc__, version='Omni4d 0.0.1')
-    model = model_from_url(arguments['--url'])
 
     logging_args = {
         'logging_destination': arguments['--logging'],
         'verbosity': arguments['--verbosity']
     }
-    setup_logging(**logging_args)
+    logger = setup_logging(**logging_args)
+    logger.debug('arguments: %s' % arguments)
 
+    model = model_from_url(arguments['--url'])
     command_args = {
         'model': model,
         'db_name': arguments['--dbname'],
