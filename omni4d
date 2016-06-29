@@ -34,24 +34,18 @@ if __name__ == '__main__':
     logger = setup_logging(**logging_args)
     logger.debug('arguments: %s' % arguments)
 
+    command_args = {
+        'db_name': arguments['--dbname'],
+        'server': arguments['--server'],
+        'port': int(arguments['--port']),
+        'user': arguments['--user'],
+        'password': arguments['--password']
+    }
+
     if arguments['create']:
-        command_args = {
-            'db_name': arguments['--dbname'],
-            'server': arguments['--server'],
-            'port': int(arguments['--port']),
-            'user': arguments['--user'],
-            'password': arguments['--password']
-        }
         create_db(**command_args)
 
     if arguments['import']:
         model = model_from_url(arguments['--url'])
-        command_args = {
-            'model': model,
-            'db_name': arguments['--dbname'],
-            'server': arguments['--server'],
-            'port': int(arguments['--port']),
-            'user': arguments['--user'],
-            'password': arguments['--password']
-        }
+        command_args['model'] = model
         import_model(**command_args)
