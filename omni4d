@@ -1,72 +1,30 @@
 #!/usr/bin/env python
-import argparse
+"""Run axelrod
+Usage:
+    omni4d [-l LOGGING] [-v VERBOSITY] import -f URL [-d DBNAME] [-s SERVER] [-n PORT] [-u USER] [-p PASSWORD]
+    omni4d -h | --help
+    omni4d --version
+
+Options:
+    -l --logging LOGGING       Logging destination (console, file or none) [default: console]
+    -v --verbosity VERBOSITY          Logging verbosity [default: info]
+    -f --url URL
+    -d --dbname DBNAME  [default: omni4d]
+    -s --server SERVER  [default: localhost]
+    -n --port PORT  [default: 2424]
+    -u --user USER  [default: admin]
+    -p --password PASSWORD  [default: admin]
+    -h --help             Show a help message
+    --version             Show the version
+"""
+from docopt import docopt
 from omni4d_python.orient import import_model
 from omni4d_python.model import model_from_url
 from omni4d_python.session import setup_logging
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog='PROG')
 
-    parser.add_argument(
-        '-l', '--logging',
-        type=str,
-        dest='logging_destination',
-        default='console',
-        help='Logging destination (console or none)')
-
-    parser.add_argument(
-        '-v', '--verbosity',
-        type=str,
-        default='INFO',
-        dest="verbosity",
-        help='url to model definition file')
-
-    subparsers = parser.add_subparsers(help='sub-command help')
-    parser_import = subparsers.add_parser('import', help='import help')
-
-    parser_import.add_argument(
-        '-f', '--file_url',
-        type=str,
-        dest="file_url",
-        help='url to model definition file')
-
-    parser_import.add_argument(
-        '-d', '--db_name',
-        type=str,
-        default='omni4d',
-        dest="db_name",
-        help='OrientDb database name')
-
-    parser_import.add_argument(
-        '-s', '--server',
-        type=str,
-        default='localhost',
-        dest="server",
-        help='hostname for OrientDb Server')
-
-    parser_import.add_argument(
-        '-n', '--port_number',
-        type=int,
-        default=2424,
-        dest="port",
-        help='Port number for OrientDb Server')
-
-    parser_import.add_argument(
-        '-u', '--user',
-        type=str,
-        default='admin',
-        dest="user",
-        help='User name for OrientDb Server')
-
-    parser_import.add_argument(
-        '-p', '--password',
-        type=str,
-        default='admin',
-        dest="password",
-        help='Password for OrientDb Server')
-
-    args = parser.parse_args()
-
-    model = model_from_url(args.file_url)
-    setup_logging(args.logging_destination, args.verbosity)
-    import_model(model, args.db_name, args.server, args.port, args.user, args.password)
+    arguments = docopt(__doc__, version='Omni4d 0.0.1')
+    model = model_from_url(arguments['--url'])
+    setup_logging(arguments['--logging'], arguments['--verbosity'])
+    import_model(model, arguments['--dbname'], arguments['--server'], int(arguments['--port']), arguments['--user'], arguments['--password'])
