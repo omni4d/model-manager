@@ -120,9 +120,10 @@ def create_db(db_name, server, port, user, password):
     for edge_type in edge_types:
         client.command('create class %s extends E' % edge_type)
 
+    client.db_close(db_name)
+
 
 def import_model(model, db_name, server, port, user, password):
-
     client = OrientDB(server, port)
     client.connect(user, password)
 
