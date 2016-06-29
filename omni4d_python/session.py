@@ -21,3 +21,4 @@ def setup_logging(logging_destination='console', verbosity='INFO'):
     level = logging.getLevelName(verbosity.upper())
     logger.setLevel(level)
     logger.addHandler(logHandler)
+    return logger
