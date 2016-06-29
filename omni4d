@@ -26,5 +26,19 @@ if __name__ == '__main__':
 
     arguments = docopt(__doc__, version='Omni4d 0.0.1')
     model = model_from_url(arguments['--url'])
-    setup_logging(arguments['--logging'], arguments['--verbosity'])
-    import_model(model, arguments['--dbname'], arguments['--server'], int(arguments['--port']), arguments['--user'], arguments['--password'])
+
+    logging_args = {
+        'logging_destination': arguments['--logging'],
+        'verbosity': arguments['--verbosity']
+    }
+    setup_logging(**logging_args)
+
+    command_args = {
+        'model': model,
+        'db_name': arguments['--dbname'],
+        'server': arguments['--server'],
+        'port': int(arguments['--port']),
+        'user': arguments['--user'],
+        'password': arguments['--password']
+    }
+    import_model(**command_args)
