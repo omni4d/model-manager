@@ -7,15 +7,15 @@ Usage:
 
 Options:
     -l --logging LOGGING       Logging destination (console, file or none) [default: console]
-    -v --verbosity VERBOSITY          Logging verbosity [default: info]
-    -f --url URL
-    -d --dbname DBNAME  [default: omni4d]
-    -s --server SERVER  [default: localhost]
-    -n --port PORT  [default: 2424]
-    -u --user USER  [default: admin]
-    -p --password PASSWORD  [default: admin]
-    -h --help             Show a help message
-    --version             Show the version
+    -v --verbosity VERBOSITY   Logging verbosity [default: info]
+    -f --url URL               Url of model file to import
+    -d --dbname DBNAME         [default: omni4d]
+    -s --server SERVER         Server name or ip address [default: localhost]
+    -n --port PORT             Port number for server [default: 2424]
+    -u --user USER             DBMS user [default: admin]
+    -p --password PASSWORD     DBMS password [default: admin]
+    -h --help                  Show a help message
+    --version                  Show the version
 """
 from docopt import docopt
 from omni4d_python.orient import import_model
