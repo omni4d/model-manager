@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 """Omni4d
 Usage:
-    omni4d [-l LOGGING] [-v VERBOSITY] create [-d DBNAME] [-s SERVER] [-n PORT] [-u USER] [-p PASSWORD]
-    omni4d [-l LOGGING] [-v VERBOSITY] import -f URL [-d DBNAME] [-s SERVER] [-n PORT] [-u USER] [-p PASSWORD]
+    omni4d create -t DBMS [-l LOGGING] [-v VERBOSITY] [-d DBNAME] [-s SERVER] [-n PORT] [-u USER] [-p PASSWORD]
+    omni4d import -t DBMS [-l LOGGING] [-v VERBOSITY] [-d DBNAME] [-s SERVER] [-n PORT] [-u USER] [-p PASSWORD] -f URL
     omni4d -h | --help
     omni4d --version
 
 Options:
     -l --logging LOGGING       Logging destination (console, file or none) [default: console]
     -v --verbosity VERBOSITY   Logging verbosity [default: info]
+    -t --dbms                  DBMS Type (orientdb, sql)
     -f --url URL               Url of model file to import
     -d --dbname DBNAME         [default: omni4d]
     -s --server SERVER         Server name or ip address [default: localhost]
@@ -19,7 +20,6 @@ Options:
     --version                  Show the version
 """
 from docopt import docopt
-from omni4d_python.orient import import_model, create_db
 from omni4d_python.model import model_from_url
 from omni4d_python.session import setup_logging
 
@@ -41,6 +41,9 @@ if __name__ == '__main__':
         'user': arguments['--user'],
         'password': arguments['--password']
     }
+
+    if arguments['DBMS'] == 'orientdb':
+        from omni4d_python.orient import import_model, create_db
 
     if arguments['create']:
         create_db(**command_args)
