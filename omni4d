@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Run axelrod
+"""Omni4d
 Usage:
     omni4d [-l LOGGING] [-v VERBOSITY] create [-d DBNAME] [-s SERVER] [-n PORT] [-u USER] [-p PASSWORD]
     omni4d [-l LOGGING] [-v VERBOSITY] import -f URL [-d DBNAME] [-s SERVER] [-n PORT] [-u USER] [-p PASSWORD]
