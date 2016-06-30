@@ -53,6 +53,5 @@ if __name__ == '__main__':
         dbms.create_db(**command_args)
 
     if arguments['import']:
-        model = model_from_url(arguments['--url'])
-        command_args['model'] = model
+        command_args['model'] = model_from_url(arguments['--url'])
         dbms.import_model(**command_args)
