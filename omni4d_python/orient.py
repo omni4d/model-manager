@@ -2,15 +2,7 @@
 from pyorient import OrientDB, STORAGE_TYPE_MEMORY, DB_TYPE_GRAPH
 import tqdm
 import logging
-
-types = {
-    'class': 'class_of_objects',
-    'individual': 'individual',
-    'event': 'event',
-    'tuple': 'tuple'
-}
-
-edge_types = ['part', 'subpart', 'class', 'member']
+from omni4d_python import object_types, role_types
 
 logger = logging.getLogger(__name__)
 
@@ -55,10 +47,10 @@ def create_vertices(model, client):
     edges = []
     items = tqdm.tqdm(model.items(), desc='Creating vertices', leave=True)
     for sign, attributes in items:
-        sign_type = types[attributes['type']]
+        sign_type = object_types[attributes['type']]
         create_vertex(sign, sign_type, client)
 
-        if attributes['type'] == types['tuple']:
+        if attributes['type'] == object_types['tuple']:
             for object, details in attributes['objects'].items():
                 edges.append({
                     'from_sign': sign,
@@ -121,11 +113,11 @@ def create_db(db_name, server, port, user, password):
 
     client.db_create(db_name, DB_TYPE_GRAPH, STORAGE_TYPE_MEMORY)
 
-    for key, value in types.items():
+    for key, value in object_types.items():
         client.command("create class %s extends V" % value)
 
-    for edge_type in edge_types:
-        client.command("create class %s extends E" % edge_type)
+    for role_type in role_types:
+        client.command("create class %s extends E" % role_type)
 
     client.db_close(db_name)
 
