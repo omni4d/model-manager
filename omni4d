@@ -20,6 +20,7 @@ Options:
     --version                  Show the version
 """
 from docopt import docopt
+import importlib
 from omni4d_python.model import model_from_url
 from omni4d_python.session import setup_logging
 
@@ -34,6 +35,12 @@ if __name__ == '__main__':
     logger = setup_logging(**logging_args)
     logger.debug('arguments: %s' % arguments)
 
+    imports = {
+        'orientdb': 'omni4d_python.orient',
+        'sql': 'omni4d_python.sql'
+    }
+    dbms = importlib.import_module(imports[arguments['DBMS']])
+
     command_args = {
         'db_name': arguments['--dbname'],
         'server': arguments['--server'],
@@ -42,13 +49,10 @@ if __name__ == '__main__':
         'password': arguments['--password']
     }
 
-    if arguments['DBMS'] == 'orientdb':
-        from omni4d_python.orient import import_model, create_db
-
     if arguments['create']:
-        create_db(**command_args)
+        dbms.create_db(**command_args)
 
     if arguments['import']:
         model = model_from_url(arguments['--url'])
         command_args['model'] = model
-        import_model(**command_args)
+        dbms.import_model(**command_args)
